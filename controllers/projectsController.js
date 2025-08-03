@@ -14,7 +14,16 @@ export const getProjects = async (req, res) => {
 export const createProject = async (req, res) => {
   try {
     const db = getDB();
-    const result = await db.collection('projects').insertOne(req.body);
+    const { name, createdAt, description, technologies, contributions, liveLink, githubLink } = req.body;
+    const result = await db.collection('projects').insertOne({
+      name,
+      createdAt,
+      description,
+      technologies: technologies || [],
+      contributions: contributions || [],
+      liveLink: liveLink || '',
+      githubLink: githubLink || ''
+    });
     res.json({ success: true, id: result.insertedId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -25,7 +34,19 @@ export const updateProject = async (req, res) => {
   try {
     const db = getDB();
     const { id } = req.params;
-    const result = await db.collection('projects').updateOne({ _id: new ObjectId(id) }, { $set: req.body });
+    const { name, createdAt, description, technologies, contributions, liveLink, githubLink } = req.body;
+    const result = await db.collection('projects').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: {
+        name,
+        createdAt,
+        description,
+        technologies: technologies || [],
+        contributions: contributions || [],
+        liveLink: liveLink || '',
+        githubLink: githubLink || ''
+      }}
+    );
     res.json({ success: true, result });
   } catch (error) {
     res.status(500).json({ error: error.message });
