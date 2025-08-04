@@ -5,6 +5,12 @@ export const getExperience = async (req, res) => {
   try {
     const db = getDB();
     const experience = await db.collection('experience').find({}).toArray();
+    // Sort by date - most recent first
+    experience.sort((a, b) => {
+      const dateA = new Date(a.from);
+      const dateB = new Date(b.from);
+      return dateB - dateA;
+    });
     res.json(experience);
   } catch (error) {
     res.status(500).json({ error: error.message });
